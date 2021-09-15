@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
@@ -24,8 +25,20 @@ namespace BlazorBlog.Client.Services
 
         public async Task<BlogPost> GetBlogPostByUrl(string url)
         {
-            var post = await _http.GetFromJsonAsync<BlogPost>($"api/Blog/{url}");
-            return post;
+            //var post = await _http.GetFromJsonAsync<BlogPost>($"api/Blog/{url}");
+            //return post;
+
+            var result = await _http.GetAsync($"api/Blog/{url}");
+            if (result.StatusCode != HttpStatusCode.OK)
+            {
+                var message = await result.Content.ReadAsStringAsync();
+                Console.WriteLine(message);
+                return new BlogPost {Title = message};
+            }
+            else
+            {
+                return await result.Content.ReadFromJsonAsync<BlogPost>();
+            }
         }
     }
 }
