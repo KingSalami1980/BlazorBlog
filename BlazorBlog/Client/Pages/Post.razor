@@ -1,4 +1,5 @@
 ﻿@page "/posts/{url}"
+@using Markdig
 @inject BlazorBlog.Client.Services.IBlogService BlogService
 
 @if (CurrentPost == null)
@@ -12,7 +13,7 @@ else
     <h3>@CurrentPost.Title</h3>
 
     <div>
-        @CurrentPost.Content
+        @((MarkupString)Markdown.ToHtml(CurrentPost.Content))
     </div>
 }
 
